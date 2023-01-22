@@ -10,34 +10,30 @@ namespace HomeTest
         [SerializeField] private float _snapDuration;
 
         private ScrollRect _scrollRect;
-        private LayoutGroup _layoutGroup;
 
         private bool _isPointerClicked;
 
-        private void Start()
-        {
-            _scrollRect = gameObject.GetComponentWithException<ScrollRect>();
+        private void Start() => _scrollRect = gameObject.GetComponentWithException<ScrollRect>();
 
-            if (_scrollRect.content)
-                _layoutGroup = _scrollRect.content.GetComponent<LayoutGroup>();
-
-            _scrollRect.onValueChanged.AddListener(delta => Snap());
-        }
+        private void LateUpdate() => Snap();
 
         private void Snap()
         {
             if (_isPointerClicked || !_scrollRect.content) return;
 
-            int childrenAmount = _scrollRect.content.childCount - 1;
+            float childrenAmount = _scrollRect.content.childCount - 1;
 
             if (childrenAmount < 1) return;
 
             float normalizedGapDistance = 1 / (float)childrenAmount;
             float normalizedPosition = _scrollRect.horizontalNormalizedPosition;
 
-            float scrollValue = Mathf.Round(normalizedPosition / normalizedGapDistance) / (float)childrenAmount;
+            float targetNormalizedPosition = Mathf.Round(normalizedPosition / normalizedGapDistance) / (float)childrenAmount;
 
-            _scrollRect.SetValue(new Vector2(scrollValue, 0), _layoutGroup);
+            float scrollStep = Time.deltaTime / _snapDuration;
+            float scrollValue = Mathf.LerpUnclamped(normalizedPosition, targetNormalizedPosition, scrollStep);
+
+            _scrollRect.normalizedPosition = new Vector2(scrollValue, 0);
         }
 
         public void OnPointerDown(PointerEventData eventData) => _isPointerClicked = true;

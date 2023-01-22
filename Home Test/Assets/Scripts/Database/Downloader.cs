@@ -9,6 +9,7 @@ namespace HomeTest.Database
     {
         public async Task<Texture2D> DownloadImage(string imageUrl)
         {
+            // The line below should be removed
             imageUrl = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=1.00xw:0.669xh;0,0.190xh&resize=640:*";
             UnityWebRequest request = UnityWebRequestTexture.GetTexture(imageUrl);
 
