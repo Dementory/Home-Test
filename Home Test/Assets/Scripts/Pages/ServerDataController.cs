@@ -10,7 +10,7 @@ namespace HomeTest
         [SerializeField] private int _amountLoadedPerChunk;
 
         private IServerDataProvider<T> _dataProvider;
-        private IServerDataVisualizer<T> _photoCardVisualizer;
+        private IServerDataVisualizer<T> _dataVisualizer;
 
         private int _dataObjectsAmount;
 
@@ -20,7 +20,7 @@ namespace HomeTest
         private void Start()
         {
             _dataProvider = gameObject.GetComponentWithException<IServerDataProvider<T>>();
-            _photoCardVisualizer = gameObject.GetComponentWithException<IServerDataVisualizer<T>>();
+            _dataVisualizer = gameObject.GetComponentWithException<IServerDataVisualizer<T>>();
 
             LoadObjects();
         }
@@ -29,10 +29,10 @@ namespace HomeTest
         {
             _isLoading = true;
 
-            IEnumerable<T> photosData = await _dataProvider.GetData(_amountLoadedPerChunk, _dataObjectsAmount);
-            _dataObjectsAmount += photosData.Count();
+            IEnumerable<T> data = await _dataProvider.GetData(_amountLoadedPerChunk, _dataObjectsAmount);
+            _dataObjectsAmount += data.Count();
 
-            await _photoCardVisualizer.Spawn(photosData.ToArray());
+            await _dataVisualizer.Spawn(data.ToArray());
 
             _isLoading = false;
         }
